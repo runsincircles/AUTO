@@ -460,7 +460,7 @@ function createConfig() {
       userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64",
       online: true,
       autoMarkDelivery: false,
-      autoMarkRead: false
+      autoMarkRead: true
     }
   }];
   const dataFolder = './data';
