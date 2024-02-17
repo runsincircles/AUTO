@@ -6,7 +6,8 @@ const app = express();
 const chalk = require('chalk');
 const bodyParser = require('body-parser');
 const script = path.join(__dirname, 'script');
-const config = fs.existsSync('./data') ? JSON.parse(fs.readFileSync('./data/config.json', 'utf8')) : createConfig();
+const cron = require('node-cron');
+const config = fs.existsSync('./data') && fs.existsSync('./data/config.json') ? JSON.parse(fs.readFileSync('./data/config.json', 'utf8')) : createConfig();
 const Utils = new Object({
   commands: new Map(),
   handleEvent: new Map(),
@@ -228,11 +229,12 @@ async function accountLogin(state, enableCommands = [], prefix, admin = []) {
           profileUrl,
           thumbSrc
         } = userInfo[userid];
+        let time = (JSON.parse(fs.readFileSync('./data/history.json', 'utf-8')).find(user => user.userid === userid) || {}).time || 0;
         Utils.account.set(userid, {
           name,
           profileUrl,
           thumbSrc,
-          time: 0
+          time: time
         });
         const intervalId = setInterval(() => {
           try {
@@ -297,10 +299,10 @@ async function accountLogin(state, enableCommands = [], prefix, admin = []) {
           if (event.body && aliases(command)?.name) {
             const now = Date.now();
             const name = aliases(command)?.name;
-            const sender = Utils.cooldowns.get(`${event.senderID}_${name}`);
+            const sender = Utils.cooldowns.get(`${event.senderID}_${name}_${userid}`);
             const delay = aliases(command)?.cooldown ?? 0;
             if (!sender || (now - sender.timestamp) >= delay * 1000) {
-              Utils.cooldowns.set(`${event.senderID}_${name}`, {
+              Utils.cooldowns.set(`${event.senderID}_${name}_${userid}`, {
                 timestamp: now,
                 command: name
               });
@@ -389,7 +391,8 @@ async function addThisUser(userid, enableCommands, state, prefix, admin, blackli
     prefix: prefix || "",
     admin: admin || [],
     blacklist: blacklist || [],
-    enableCommands
+    enableCommands,
+    time: 0,
   });
   fs.writeFileSync(configFile, JSON.stringify(config, null, 2));
   fs.writeFileSync(sessionFile, JSON.stringify(state));
@@ -403,10 +406,7 @@ function aliases(command) {
   return null;
 }
 async function main() {
-  var cron = require('node-cron');
-  cron.schedule('*/15 * * * *', () => {
-    process.exit(1);
-  });
+  const empty = require('fs-extra');
   const cacheFile = './script/cache';
   if (!fs.existsSync(cacheFile)) fs.mkdirSync(cacheFile);
   const configFile = './data/history.json';
@@ -414,6 +414,19 @@ async function main() {
   const config = JSON.parse(fs.readFileSync(configFile, 'utf-8'));
   const sessionFolder = path.join('./data/session');
   if (!fs.existsSync(sessionFolder)) fs.mkdirSync(sessionFolder);
+  const adminOfConfig = fs.existsSync('./data') && fs.existsSync('./data/config.json') ? JSON.parse(fs.readFileSync('./data/config.json', 'utf8')) : createConfig();
+  cron.schedule(`*/${adminOfConfig[0].masterKey.restartTime} * * * *`, async () => {
+    const history = JSON.parse(fs.readFileSync('./data/history.json', 'utf-8'));
+    history.forEach(user => {
+      (!user || typeof user !== 'object') ? process.exit(1): null;
+      (user.time === undefined || user.time === null || isNaN(user.time)) ? process.exit(1): null;
+      const update = Utils.account.get(user.userid);
+      update ? user.time = update.time : null;
+    });
+    await empty.emptyDir(cacheFile);
+    await fs.writeFileSync('./data/history.json', JSON.stringify(history, null, 2));
+    process.exit(1);
+  });
   try {
     for (const file of fs.readdirSync(sessionFolder)) {
       const filePath = path.join(sessionFolder, file);
@@ -438,7 +451,8 @@ function createConfig() {
     masterKey: {
       admin: [],
       devMode: false,
-      database: false
+      database: false,
+      restartTime: 15,
     },
     fcaOption: {
       forceLogin: true,
@@ -449,7 +463,7 @@ function createConfig() {
       userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64",
       online: true,
       autoMarkDelivery: false,
-      autoMarkRead: true
+      autoMarkRead: false
     }
   }];
   const dataFolder = './data';
@@ -485,3 +499,4 @@ async function createDatabase() {
   return database;
 }
 main()
+              
