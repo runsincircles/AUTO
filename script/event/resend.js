@@ -29,7 +29,7 @@ const name = info[event.senderID].name
           photo.push(fs.createReadStream(`./script/cache/${item.filename}.jpg`))
           del.push(`./script/cache/${item.filename}.jpg`)
       }
-                    api.sendMessage({body:`${name} sary manja be zao ve de dadanao ❤‍🔥: ${msgData[event.messageID].body}`, attachment: photo}, event.threadID, () => {
+                    api.sendMessage({body:`${name} sary manja be zao ve de fafanao ❤‍🔥: ${msgData[event.messageID].body}`, attachment: photo}, event.threadID, () => {
                for (const item of del) fs.unlinkSync(item)
              }) 
 
@@ -39,7 +39,7 @@ let { data } = await axios.get(msgData[event.messageID].attachments[0].url, {res
 
  fs.writeFileSync(`./script/cache/audio.mp3`, Buffer.from(data)) 
 
-api.sendMessage({body:`${name} unsent this voice message: ${msgData[event.messageID].body}`, attachment: fs.createReadStream('./script/cache/audio.mp3')}, event.threadID, () => {
+api.sendMessage({body:`${name} ah! Averiko ihany aloha ny fosafosa anao 😚: ${msgData[event.messageID].body}`, attachment: fs.createReadStream('./script/cache/audio.mp3')}, event.threadID, () => {
      fs.unlinkSync('./script/cache/audio.mp3')
              });
 
