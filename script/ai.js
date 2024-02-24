@@ -4,7 +4,7 @@ module.exports.config = {
   version: '1.0.0',
   role: 0,
   hasPrefix: false,
-  aliases: ['gpt', 'openai', 'dino'],
+  aliases: ['gpt', 'openai',],
   description: "An AI command powered by GPT-4",
   usage: "Ai [promot]",
   credits: 'Developer',
@@ -24,7 +24,7 @@ module.exports.run = async function({
   try {
     const {
       data
-    } = await axios.get(`https://openaikey.onrender.com/api?prompt=${encodeURIComponent(input)}`);
+    } = await axios.get(`openaikey-x20f.onrender.com/api?prompt=${encodeURIComponent(input)}`);
     const response = data.response;
     api.sendMessage(response, event.threadID, event.messageID);
   } catch (error) {
