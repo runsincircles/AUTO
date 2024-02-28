@@ -16,6 +16,7 @@ module.exports.run = async function({
   args
 }) {
   const input = args.join(' ');
+  const id = event.senderID;
   if (!input) {
     api.sendMessage(`veullez me poser une question de la manière suivante : 'ai'. example: 'ai quelle est la capitale de la France '`, event.threadID, event.messageID);
     return;
@@ -24,7 +25,7 @@ module.exports.run = async function({
   try {
     const {
       data
-    } = await axios.get(`https://ai-tools.replit.app/gpt?prompt=${encodeURIComponent(input)}&uid={event.senderID}`);
+    } = await axios.get(`https://ai-tools.replit.app/gpt?prompt=${encodeURIComponent(input)}&uid={id}`);
     const response = data.gpt4;
     api.sendMessage(response, event.threadID, event.messageID);
   } catch (error) {
