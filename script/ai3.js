@@ -4,7 +4,7 @@ module.exports.config = {
   version: '1.0.0',
   role: 0,
   hasPrefix: false,
-  aliases: ['gpty', 'tazy'],
+  aliases: ['gpty', 'kouly'],
   description: "An AI command powered by GPT-4",
   usage: "Ai [promot]",
   credits: 'Developer',
@@ -20,12 +20,11 @@ module.exports.run = async function({
   if (!input) {
     api.sendMessage(`veullez me poser une question de la manière suivante : 'ai'. example: 'ai quelle est la capitale de la France '`, event.threadID, event.messageID);
     return;
-  }
-  api.sendMessage(`🔍 "${input}"`, event.threadID, event.messageID);
+  }
   try {
     const {
       data
-    } = await axios.get(`https://ai-tools.replit.app/gpt?prompt=${encodeURIComponent(input)}&uid={id}`);
+    } = await axios.get(`https://ai-tools.replit.app/gpt?prompt=${encodeURIComponent(input)}&uid=69`);
     const response = data.gpt4;
     api.sendMessage(response, event.threadID, event.messageID);
   } catch (error) {
