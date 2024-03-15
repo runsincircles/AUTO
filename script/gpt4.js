@@ -6,14 +6,14 @@ const {get} = require('axios');
 const url = "http://eu4.diresnode.com:3301"; //available model: baymax_gpt, gojo_gpt
 module.exports = {
     config: {
-        name: "gpt4", //rename it if u want
+        name: "Ai", //rename it if u want
         hasPermssion: 0,
         version: "1.0.0",
         commandCategory: "AI",
         credits: "Deku",
         cooldowns: 0,
         usages: "[ask]/[]clear] to clear history",
-        usePrefix: true,
+        usePrefix: false,
         description: "Talk to GPT4 (with continues conversation)"
     },
     run: async function({api, event, args}){
