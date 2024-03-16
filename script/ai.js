@@ -1,10 +1,10 @@
 const axios = require('axios');
 module.exports.config = {
-  name: 'ai2',
+  name: 'ai',
   version: '1.0.0',
   role: 0,
   hasPrefix: false,
-  aliases: ['gpt', 'openai',],
+  aliases: ['gpt', 'Ai',],
   description: "An AI command powered by GPT-4",
   usage: "Ai [prompt]",
   credits: 'Developer',
