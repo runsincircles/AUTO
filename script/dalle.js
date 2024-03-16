@@ -9,7 +9,7 @@ module.exports.config = {
 		aliases: ["dal"],
 		hasPrefix: false,
 		description: "Generate images by Dalle-3 AI",
-		usage: "[text] \nJamon [A 17/18/19 years old boy/girl watching football match on tv and written Dipto and 69 on the back of his Dress , 4k]",
+		usage: "[text] \nJamon [flying furby fairies sliding down a rainbow near the beach , 4k]",
 		cooldown: 5
 };
 
