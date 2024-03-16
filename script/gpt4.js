@@ -6,7 +6,7 @@ const {get} = require('axios');
 const url = "http://eu4.diresnode.com:3301"; //available model: baymax_gpt, gojo_gpt
 module.exports = {
     config: {
-        name: "Ai", //rename it if u want
+        name: "gpt", //rename it if u want
         hasPermssion: 0,
         version: "1.0.0",
         commandCategory: "AI",
