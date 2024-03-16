@@ -7,7 +7,7 @@ module.exports.config = {
 		credits: "api by jerome",//api by jonell
 		description: "Gpt architecture",
 		hasPrefix: false,
-		aliases: ["gpt"],
+		aliases: ["gpt4"],
 		cooldown: 5,
 };
 
