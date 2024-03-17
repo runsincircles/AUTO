@@ -1,44 +1,41 @@
+const fs = require('fs');
 const axios = require('axios');
-const fs = require('fs-extra');
+const path = require('path');
 
 module.exports.config = {
   name: "fbdl",
-  version: "1.0",
+  version: "1.0.0",
   hasPermission: 0,
-  credits: "Rickciel",
-  description: "Download Facebook videos",
-  commandCategory: "downloader",
-  usages: "url",
-  cooldowns: 2,
+  credits: "Eugene Aguilar",
+  description: "Download Facebook video link",
+  commandCategory: "media",
+  usages: "fbdl [link]",
+  cooldowns: 8,
 };
-let cmdowner = "RICKCKIEL";
-console.log(cmdowner);
-module.exports.run = async ({ api, event, args }) => {
-  let { threadID, messageID } = event;
-  let url = args[0];
 
-  if (!url) return api.sendMessage("Please provide a Facebook video URL", threadID, messageID);
-
+module.exports.run = async function ({ api, event, args }) {
   try {
-    api.sendMessage("Downloading the video. Please wait...", threadID, messageID);
+    const q = args.join(" ");
+    if (!q) {
+      api.sendMessage(`Please provide a URL from facebook.com`, event.threadID, event.messageID);
+      return;
+    }
 
-    const response = await axios.get(`http://eu4.diresnode.com:3301/fbdl?url=${encodeURIComponent(url)}`);
-    const videoUrl = response.data.result;
+    api.sendMessage(`Processing...`, event.threadID, event.messageID);
 
-    const videoBuffer = await axios.get(videoUrl, { responseType: 'arraybuffer' });
-    const path = __dirname + `/cache/facebook_video.mp4`;
-    fs.writeFileSync(path, Buffer.from(videoBuffer.data, 'binary'));
-    api.sendMessage(
-      {
-        body: "Here is the downloaded video:",
-        attachment: fs.createReadStream(path),
-      },
-      threadID,
-      () => fs.unlinkSync(path),
-      messageID
-    );
-  } catch (error) {
-    console.error("Error downloading video:", error.message);
-    api.sendMessage("An error occurred while downloading the video", threadID, messageID);
+    const response = await axios.get(`https://hoanghao.me/api/facebook/download?url=${q}`);
+    const videoUrl = response.data.data.video;
+    const t = response.data.data.title;
+
+    const pathie = path.join(__dirname, `cache`, `eurix.mp4`);
+
+const stream = await axios.get(videoUrl, { responseType: "arraybuffer"});
+
+    fs.writeFileSync(pathie, Buffer.from(stream.data, 'binary'));
+
+    await api.sendMessage({ body: `𝐕𝐨𝐢𝐜𝐢 𝐯𝐨𝐭𝐫𝐞 𝐯𝐢𝐝é𝐨\n\nTitle: ${t}`, attachment: fs.createReadStream(pathie) }, event.threadID, event.messageID);
+  } catch (e) {
+    api.sendMessage(`Error downloading Facebook video!!\n${e}`, event.threadID, event.messageID);
+    console.error(e); 
   }
 };
